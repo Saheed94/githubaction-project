@@ -12,5 +12,22 @@ jobs:
     - name: checkout code
       uses: actions/checkout@v4
     
+    - name: Log in to Docker Hub
+      run: echo "${{ secrets.DOCKER_HUB_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_HUB_USERNAME }}" --password-stdin
+
     - name: Build the Docker image
-      run: docker build -t saheed941/myfirst-docker-repo . 
+      run: docker build -t saheed941/myfirst-docker-repo:latest .
+
+    - name: Push Docker image to Docker Hub
+      run: docker push saheed941/myfirst-docker-repo:latest
+
+    - name: SSH into EC2 and navigate to Docker Compose directory
+      run: |
+        ssh -i /Users/halimaabdulsalam/Downloads/.ssh/myubuntu.pem ubuntu@ec2-34-227-117-148.compute-1.amazonaws.com << EOF
+          cd /home/ubuntu/dockercompose
+          docker-compose up -d
+        EOF
+      env:
+        EC2_USER: ubuntu
+        EC2_HOST: ec2-34-227-117-148.compute-1.amazonaws.com
+        SSH_PRIVATE_KEY: ${{ secrets.EC2_SSH_KEY }}
