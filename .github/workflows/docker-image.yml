@@ -9,7 +9,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: checkout code
+    - name: Checkout code
       uses: actions/checkout@v4
     
     - name: Log in to Docker Hub
@@ -23,10 +23,15 @@ jobs:
 
     - name: SSH into EC2 and navigate to Docker Compose directory
       run: |
-        ssh -i /Users/halimaabdulsalam/Downloads/.ssh/myubuntu.pem ubuntu@ec2-34-227-117-148.compute-1.amazonaws.com << EOF
+        echo "${{ secrets.EC2_SSH_KEY }}" > myubuntu.pem
+        chmod 600 myubuntu.pem
+        ssh -i myubuntu.pem ubuntu@ec2-34-227-117-148.compute-1.amazonaws.com << EOF
           cd /home/ubuntu/dockercompose
           docker-compose up -d
+          rm -f myubuntu.pem
         EOF
+
+
       env:
         EC2_USER: ubuntu
         EC2_HOST: ec2-34-227-117-148.compute-1.amazonaws.com
