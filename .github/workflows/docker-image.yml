@@ -22,19 +22,15 @@ jobs:
       run: docker push saheed941/myfirst-docker-repo:latest
 
     - name: SSH into EC2 and navigate to Docker Compose directory
-      run: |
-        echo "${{ secrets.EC2_SSH_KEY }}" > myubuntu.pem
-        chmod 600 myubuntu.pem
-        # Create .ssh directory if it doesn't exist
-        mkdir -p ~/.ssh
-        
-        ssh -o StrictHostKeyChecking=no -i myubuntu.pem ubuntu@ec2-34-227-117-148.compute-1.amazonaws.com << 'EOF'
-          cd /home/ubuntu/dockercompose
-          sudo ./dockerscript.sh 
-        EOF
-
-
       env:
         EC2_USER: ubuntu
         EC2_HOST: ec2-34-227-117-148.compute-1.amazonaws.com
         SSH_PRIVATE_KEY: ${{ secrets.EC2_SSH_KEY }}
+      run: |
+        echo "${{ secrets.EC2_SSH_KEY }}" > /tmp/myubuntu.pem
+        chmod 600 /tmp/myubuntu.pem
+        
+        ssh -o StrictHostKeyChecking=no -i /tmp/myubuntu.pem ubuntu@ec2-3-92-229-56.compute-1.amazonaws.com << 'EOF'
+          cd /home/ubuntu/dockercompose
+          sudo ./dockerscript.sh 
+        EOF
