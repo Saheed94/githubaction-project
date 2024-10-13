@@ -31,7 +31,7 @@ jobs:
         ssh-keyscan -H ec2-34-227-117-148.compute-1.amazonaws.com >> ~/.ssh/known_hosts
         ssh -i myubuntu.pem ubuntu@ec2-34-227-117-148.compute-1.amazonaws.com << EOF
           cd /home/ubuntu/dockercompose
-          ./dockerscript.sh 
+          sudo ./dockerscript.sh 
         EOF
 
 
